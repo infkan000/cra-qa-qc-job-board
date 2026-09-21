@@ -1,0 +1,68 @@
+name: Refresh CRA QA QC jobs and publish
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/refresh-and-pages.yml"
+      - "scripts/**"
+      - "data/config.json"
+  schedule:
+    - cron: "10 1 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: cra-qa-qc-job-board-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Check repository privacy
+        run: python3 scripts/privacy_check.py
+
+      - name: Refresh public official job sources
+        run: python3 scripts/cloud_collect.py
+
+      - name: Check generated files
+        run: python3 scripts/privacy_check.py
+
+      - name: Save refreshed data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/config.json data/jobs.jsonl dashboard/index.html public/index.html
+          if ! git diff --cached --quiet; then
+            git commit -m "Refresh CRA QA QC job board"
+            git pull --rebase origin main
+            git push
+          fi
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: public
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
