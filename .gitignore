@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.env
+.env.*
+data/private/
+*.pem
+*.p12
+*.key
+credentials.json
+
