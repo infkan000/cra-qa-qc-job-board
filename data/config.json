@@ -63,8 +63,8 @@
   "runtime": {
     "timezone": "Asia/Shanghai",
     "schedule": "FREQ=DAILY;BYHOUR=9;BYMINUTE=10;BYSECOND=0",
-    "last_run": "2026-09-22T06:07:06+00:00",
-    "collection_note": "2026-09-22 云端采集完成：13/13 个公开官方来源成功，新增 0 条。"
+    "last_run": "2026-09-23T05:54:38+00:00",
+    "collection_note": "2026-09-23 云端采集完成：13/13 个公开官方来源成功，新增 0 条。"
   },
   "collect_mode": "github-actions-public-official-sources",
   "official_sources": [
